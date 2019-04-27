@@ -82,6 +82,91 @@ void searchtree1::Insert(tree_element1 *currRoot, tree_element1 *elem){
     }
 }
 
+tree_element1* searchtree1::searchMin(tree_element1* root){
+    while(root->left != NULL){
+        root = root->right;
+    }
+    printf("%d\n", root->val);
+    return root;
+}
+
+void searchtree1::DeleteValue(object o){
+    tree_element1 *curr = root;
+    tree_element1 *pre;      //saves previous element
+    tree_element1 *save;
+    bool right = false;
+
+        while (curr != NULL){
+            if (curr->val == o){
+                if(curr->left == NULL && curr->right == NULL){
+                        if(curr == root){
+                        DeleteTree(root);
+                        }else{
+                        if(right){
+                            pre->right = NULL;
+                        }else{
+                            pre->left = NULL;
+                        }}
+                        delete curr;
+                        return;
+                    }
+                if(curr->left == NULL && curr->right != NULL){
+                        if(curr == root){
+                            root = curr->right;
+                        }else{
+                        if(right){
+                            pre->right = curr->right;
+                        }else{
+                            pre->left = curr->right;
+                        }}
+                        delete curr;
+                        return;
+                    }
+                if(curr->left != NULL && curr->right == NULL){
+                        if(curr == root){
+                            root = curr->left;
+                        }else{
+                        if(right){
+                            pre->right = curr->left;
+                        }else{
+                            pre->left = curr->left;
+                        }}
+                        delete curr;
+                        return;
+                    }
+                if(curr->left != NULL && curr->right != NULL){
+                        save = searchMin(curr);
+                        if(curr->left != save){
+                            save->left = curr->left;
+                        }
+                        if(curr->right != save){
+                            save->right = curr->right;
+                        }
+                        if(curr == root){
+                            root = save;
+                        }else{
+                        if(right){
+                            pre->right = save;
+                        }else{
+                            pre->left = save;
+                        }}
+                        delete curr;
+                        return;
+                    }
+            }
+            else{
+                pre = curr;
+                if(o <= curr->val){
+                    curr = curr->left;
+                    right = false;
+                }else{
+                    curr = curr->right;
+                    right = true;
+                }
+            }
+    }
+}
+
 void searchtree1::Print(){
     Print(root);
     printf("\n");
