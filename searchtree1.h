@@ -9,6 +9,7 @@ class tree_element1 {
         object val; // value
         tree_element1* left;  // left next element
         tree_element1* right; // right next element
+        tree_element1* DeleteVal(object o);
 };
 
 class searchtree1 {
@@ -22,7 +23,8 @@ class searchtree1 {
         ~searchtree1();
         void Insert(object o); // insert value
         bool Contains(object o); // value in tree?
-        void DeleteValue(object o); // delete value
+        void DeleteValueIterative(object o); // delete value iterative
+        void DeleteValueRecursive(object o);//delete value rekursive
         void Print(); // print tree
 };
 
@@ -82,15 +84,18 @@ void searchtree1::Insert(tree_element1 *currRoot, tree_element1 *elem){
     }
 }
 
-tree_element1* searchtree1::searchMin(tree_element1* root){
+tree_element1* searchMin(tree_element1* root){
+    tree_element1* pre;
     while(root->left != NULL){
+        pre = root;
         root = root->right;
     }
+    pre->right = root->right;
     printf("%d\n", root->val);
     return root;
 }
 
-void searchtree1::DeleteValue(object o){
+void searchtree1::DeleteValueIterative(object o){
     tree_element1 *curr = root;
     tree_element1 *pre;      //saves previous element
     tree_element1 *save;
@@ -114,11 +119,12 @@ void searchtree1::DeleteValue(object o){
                         if(curr == root){
                             root = curr->right;
                         }else{
-                        if(right){
-                            pre->right = curr->right;
-                        }else{
-                            pre->left = curr->right;
-                        }}
+                            if(right){
+                                pre->right = curr->right;
+                            }else{
+                                pre->left = curr->right;
+                            }
+                        }
                         delete curr;
                         return;
                     }
@@ -126,11 +132,12 @@ void searchtree1::DeleteValue(object o){
                         if(curr == root){
                             root = curr->left;
                         }else{
-                        if(right){
-                            pre->right = curr->left;
-                        }else{
-                            pre->left = curr->left;
-                        }}
+                            if(right){
+                                pre->right = curr->left;
+                            }else{
+                                pre->left = curr->left;
+                            }
+                        }
                         delete curr;
                         return;
                     }
@@ -165,6 +172,110 @@ void searchtree1::DeleteValue(object o){
                 }
             }
     }
+}
+
+void searchtree1::DeleteValueRecursive(object o){
+    tree_element1* save = root;
+    tree_element1* curr;
+    if(root->val == o){
+        if(save->left == NULL && save->right == NULL){
+                        DeleteTree(root);
+                    }
+                if(save->left == NULL && save->right != NULL){
+                        root = root->right;
+                        delete save;
+                    }
+                if(save->left != NULL && save->right == NULL){
+                        root = save->left;
+                        delete save;
+                    }
+                if(save->left != NULL && save->right != NULL){
+                        curr = searchMin(save);
+                        if(save->left != curr){
+                            curr->left = save->left;
+                        }
+                        if(save->right != curr){
+                            curr->right = save->right;
+                        }
+                        root = curr;
+                        delete save;
+                    }
+
+    }else{
+        root->DeleteVal(o);
+    }
+}
+
+tree_element1* tree_element1::DeleteVal(object o){
+    tree_element1* save;
+    tree_element1* curr;
+            if (left != NULL && left->val == o){
+                save = left;
+                if(save->left == NULL && save->right == NULL){
+                        left = NULL;
+                        delete save;
+                        return this;
+                    }
+                if(save->left == NULL && save->right != NULL){
+                        left = save->right;
+                        delete save;
+                        return this;
+                    }
+                if(save->left != NULL && save->right == NULL){
+                        left = save->left;
+                        delete save;
+                        return this;
+                    }
+                if(save->left != NULL && save->right != NULL){
+                        curr = searchMin(save);
+                        if(save->left != curr){
+                            curr->left = save->left;
+                        }
+                        if(save->right != curr){
+                            curr->right = save->right;
+                        }
+                        left = curr;
+                        delete save;
+                        return this;
+                    }
+            }else if (right != NULL && right->val == o){
+                save = right;
+                if(save->left == NULL && save->right == NULL){
+                        right = NULL;
+                        delete save;
+                        return this;
+                    }
+                if(save->left == NULL && save->right != NULL){
+                        right = save->right;
+                        delete save;
+                        return this;
+                    }
+                if(save->left != NULL && save->right == NULL){
+                        right = save->left;
+                        delete save;
+                        return this;
+                    }
+                if(save->left != NULL && save->right != NULL){
+                        curr = searchMin(save);
+                        if(save->left != curr){
+                            curr->left = save->left;
+                        }
+                        if(save->right != curr){
+                            curr->right = save->right;
+                        }
+                        right = curr;
+                        delete save;
+                        return this;
+                    }
+            }else{
+                if(o <= val && left != NULL){
+                    left = left->DeleteVal(o);
+                    return this;
+                }else if(o > val && right != NULL){
+                    right = right->DeleteVal(o);
+                    return this;
+                }
+            }
 }
 
 void searchtree1::Print(){
